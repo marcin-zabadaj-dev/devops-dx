@@ -53,6 +53,9 @@
     "topics": {
       "hello": {
         "description": "Commands to say hello."
+      }, 
+      "server": {
+        "description": "Commands to manage DX Server."
       }
     }
   },
