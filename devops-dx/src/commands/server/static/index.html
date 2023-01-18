@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="https://cdn.korzh.com/metroui/v4/css/metro-all.min.css">
+</head>
+
+<body>
+    <div class="px-1 py-1">
+        <nav data-role="ribbonmenu">
+            <ul class="tabs-holder">
+                <li class="static"><a href="#">Static</a></li>
+                <li><a href="#section-one">One</a></li>
+                <li><a href="#section-two">Two</a></li>
+                <li><a href="#section-three">Three</a></li>
+            </ul>
+
+            <div class="content-holder">
+                <div class="section" id="section-one">
+                    <div class="group">
+                        <button class="ribbon-button" onclick="handleClick()">
+                            <span class="icon">
+                                <img src="images/share.svg">
+                            </span>
+                            <span class="caption">Share</span>
+                        </button>
+
+                        <span class="title">Group title</span>
+                    </div>
+
+                    <div class="group">
+                        <button class="ribbon-button">
+                            <span class="icon">
+                                <img src="images/share.svg">
+                            </span>
+                            <span class="caption">Share</span>
+                        </button>
+
+                        <span class="title">Group title</span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+
+    <script>
+        let handleClick = function () {
+            console.log('click event');
+            let postObj = {
+                id: 1,
+                title: "What is AJAX",
+                body: "AJAX stands for Asynchronous JavaScript..."
+            };
+
+            let post = JSON.stringify(postObj)
+            const url = "http://localhost:8000/home"
+            let xhr = new XMLHttpRequest()
+            xhr.open('POST', url, true)
+            xhr.setRequestHeader('Content-type', 'application/json; charset=UTF-8')
+            xhr.send(post);
+            xhr.onload = function () {
+                if (xhr.status === 201) {
+                    console.log("Post successfully created!")
+                }
+            }
+        };
+    </script>
+    <script src="https://cdn.korzh.com/metroui/v4/js/metro.min.js"></script>
+</body>
+
+</html>

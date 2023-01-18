@@ -4,7 +4,7 @@
   "forceFlagDescription": "example boolean flag",
   "errorNoOrgResults": "No results found for the org '%s'.",
   "examples": [
-    "sfdx hello:org --targetusername myOrg@example.com --targetdevhubusername devhub@org.com",
+    "sfdx server:start",
     "sfdx hello:org --name myname --targetusername myOrg@example.com"
   ]
 }
