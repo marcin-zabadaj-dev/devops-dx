@@ -4,7 +4,7 @@ import { Messages } from '@salesforce/core';
 import { AnyJson } from '@salesforce/ts-types';
 import * as http from 'http';
 import * as open from 'open';
-import * as fs from 'fs';
+import * as route from './router/main';
 
 Messages.importMessagesDirectory(__dirname);
 
@@ -16,77 +16,34 @@ export default class Start extends SfdxCommand {
   public static args = [{ name: 'file' }];
 
   protected static flagsConfig = {
-    name: flags.string({
-      char: 'n',
-      description: messages.getMessage('nameFlagDescription'),
-    }),
-    force: flags.boolean({
-      char: 'f',
-      description: messages.getMessage('forceFlagDescription'),
-    }),
+    portnumber: flags.string({
+      char: 'p',
+      description: messages.getMessage('portNumberDescription'),
+    })
   };
 
-  protected static requiresUsername = false;
+  protected static requiresUsername = true;
   protected static supportsDevhubUsername = false;
   protected static requiresProject = false;
 
   public async run(): Promise<AnyJson> {
     const host = 'localhost';
-    const port = 8000;
+    const port = this.flags.portnumber || 8000;
 
     const requestListener = function (request, response) {
-      if (request.method == 'POST') {
-        switch (request.url) {
-          case "/home":
-            console.log('home post');
-            var jsonString = '';
-
-            request.on('data', function (data) {
-              jsonString += data;
-            });
-
-            request.on('end', function () {
-              console.log(JSON.parse(jsonString));
-            });
-            break;
-          default:
-            response.writeHead(404);
-            response.end(JSON.stringify({ error: "Resource not found" }));
-        }
-      } else if (request.method == 'GET') {
-        console.log('get');
-        switch (request.url) {
-          case "/home":
-            fs.promises.readFile(__dirname + "/static/index.html")
-              .then(contents => {
-                response.setHeader("Content-Type", "text/html");
-                response.writeHead(200);
-                response.end(contents);
-              })
-              .catch(err => {
-                console.error(err);
-                response.writeHead(500);
-                response.end('error');
-                return;
-              });
-            break;
-          case "/authors":
-            response.writeHead(200);
-            response.end('not home');
-            break;
-          default:
-            response.writeHead(404);
-            response.end(JSON.stringify({ error: "Resource not found" }));
-        }
-      }
-    };
+      console.log(this.org);
+      const connection = this.org.getConnection();
+      console.log(connection);
+      route.default.route(request, response, connection);
+    }.bind(this);
 
     const server = http.createServer(requestListener);
+    let message = `Server is running on http://${host}:${port}`;
     server.listen(port, host, () => {
-      console.log(`Server is running on http://${host}:${port}`);
-      open('http://localhost:8000/home', { app: 'chrome' });
+      console.log(message);
+      open(`http://${host}:${port}/home`, { app: 'chrome' });
     });
 
-    return { message: 'outputString' };
+    return { message};
   }
 }

@@ -8,7 +8,7 @@
 </head>
 
 <body>
-    <div class="px-1 py-1">
+    <div class="px-1 py-1 d-flex flex-align-stretch" data-role="panel">
         <nav data-role="ribbonmenu">
             <ul class="tabs-holder">
                 <li class="static"><a href="#">Static</a></li>
@@ -16,8 +16,6 @@
                 <li><a href="#section-two">Two</a></li>
                 <li><a href="#section-three">Three</a></li>
             </ul>
-
-
 
             <div class="content-holder">
                 <div class="section" id="section-one">
@@ -45,7 +43,8 @@
                 </div>
             </div>
         </nav>
-        <div data-role="splitter" class="h-100" data-split-sizes="70, 30">
+        
+        <div data-role="splitter" class="d-flex flex-align-stretch" data-split-sizes="70, 30">
             <div class="d-flex flex-justify-center flex-align-center">This is panel 1</div>
             <div class="d-flex flex-justify-center flex-align-center">This is panel 2</div>
         </div>
@@ -62,7 +61,7 @@
             };
 
             let post = JSON.stringify(postObj)
-            const url = "http://localhost:8000/home"
+            const url = `http://${location.host}/home`
             let xhr = new XMLHttpRequest()
             xhr.open('POST', url, true)
             xhr.setRequestHeader('Content-type', 'application/json; charset=UTF-8')

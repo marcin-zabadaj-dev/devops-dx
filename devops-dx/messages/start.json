@@ -1,10 +1,9 @@
 {
-  "commandDescription": "print a greeting and your org IDs",
-  "nameFlagDescription": "name to print",
-  "forceFlagDescription": "example boolean flag",
+  "commandDescription": "Run GUI",
+  "portNumberDescription": "Port number. Default: 8000",
   "errorNoOrgResults": "No results found for the org '%s'.",
   "examples": [
-    "sfdx server:start",
-    "sfdx hello:org --name myname --targetusername myOrg@example.com"
+    "sfdx server:start -u alias",
+    "sfdx server:start -u alias -portNumber 8080"
   ]
 }
