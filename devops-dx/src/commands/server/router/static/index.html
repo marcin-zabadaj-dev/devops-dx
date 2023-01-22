@@ -8,67 +8,169 @@
 </head>
 
 <body>
-    <div class="px-1 py-1 d-flex flex-align-stretch" data-role="panel">
-        <nav data-role="ribbonmenu">
+    <div class="px-1 pt-1 d-flex flex-align-stretch" data-role="panel">
+        <nav data-role="ribbonmenu" data-on-tab="changeTab()">
             <ul class="tabs-holder">
-                <li class="static"><a href="#">Static</a></li>
-                <li><a href="#section-one">One</a></li>
-                <li><a href="#section-two">Two</a></li>
-                <li><a href="#section-three">Three</a></li>
+                <li onclick="selectOrgTab()"><a href="#section-org">Org</a></li>
+                <li onclick="selectRecordTab()"><a href="#section-record">Record</a></li>
+                <li onclick="selectSobjectInfoTab()"><a href="#section-sobjectInfo">SObject Info</a></li>
             </ul>
 
             <div class="content-holder">
-                <div class="section" id="section-one">
+                <div class="section" id="section-org">
                     <div class="group">
-                        <button class="ribbon-button" onclick="handleClick()">
-                            <span class="icon">
-                                <img src="images/share.svg">
-                            </span>
-                            <span class="caption">Share</span>
+                        <button class="ribbon-button" onclick="handleClickLoginInfo()">
+                            <span class="mif-user mif-4x fg-blue"></span>
+                            <span class="caption">Login Info</span>
+                        </button>
+                        <button class="ribbon-button" onclick="handleClickCompanyInfo()">
+                            <span class="mif-info mif-4x fg-blue"></span>
+                            <span class="caption">Company Information</span>
+                        </button>
+                        <button class="ribbon-button" onclick="handleClickLicenses()">
+                            <span class="mif-users mif-4x fg-blue"></span>
+                            <span class="caption">Licenses</span>
+                        </button>
+                        <button class="ribbon-button" onclick="handleClickLimits()">
+                            <span class="mif-rainy4 mif-4x fg-pink"></span>
+                            <span class="caption">Limits</span>
+                        </button>
+                        <button class="ribbon-button" onclick="handleClickOrgTrustStatus()">
+                            <span class="mif-stethoscope mif-4x fg-pink"></span>
+                            <span class="caption">Org Trust Status</span>
                         </button>
 
-                        <span class="title">Group title</span>
+                        <span class="title">General information</span>
                     </div>
+                </div>
 
+                <div class="section" id="section-record">
                     <div class="group">
-                        <button class="ribbon-button">
-                            <span class="icon">
-                                <img src="images/share.svg">
-                            </span>
-                            <span class="caption">Share</span>
+                        <button class="ribbon-button" onclick="handleClickCreateRecord()">
+                            <span class="mif-user-plus mif-4x fg-blue"></span>
+                            <span class="caption">Create</span>
                         </button>
 
-                        <span class="title">Group title</span>
+                        <button class="ribbon-button" onclick="handleClickReadRecord()">
+                            <span class="mif-database mif-4x fg-green"></span>
+                            <span class="caption">Read</span>
+                        </button>
+
+                        <button class="ribbon-button" onclick="handleClickUpdateRecord()">
+                            <span class="mif-jsfiddle mif-4x fg-cyan"></span>
+                            <span class="caption">Update</span>
+                        </button>
+
+                        <button class="ribbon-button" onclick="handleClickDeleteRecord()">
+                            <span class="mif-bin mif-4x fg-red"></span>
+                            <span class="caption">Delete</span>
+                        </button>
+
+                        <span class="title">General</span>
                     </div>
                 </div>
             </div>
         </nav>
-        
-        <div data-role="splitter" class="d-flex flex-align-stretch" data-split-sizes="70, 30">
-            <div class="d-flex flex-justify-center flex-align-center">This is panel 1</div>
-            <div class="d-flex flex-justify-center flex-align-center">This is panel 2</div>
-        </div>
     </div>
 
+    </div><div class="container m-4" id="mainContainer"></div>
 
     <script>
-        let handleClick = function () {
-            console.log('click event');
+        let currentTab = '';
+
+        let selectOrgTab = function () {
+            currentTab = 'ORG_TAB';
+        };
+
+        let selectRecordTab = function () {
+            currentTab = 'RECORD_TAB';
+        };
+
+        let selectSobjectInfoTab = function () {
+            currentTab = 'SOBJECT_INFO_TAB';
+        };
+
+        let startLoading = function () {
+            document.getElementById("mainContainer").innerHTML = `<span class="mif-spinner2 ani-pulse m-4"></span> Loading...`;
+        }
+
+        let changeTab = function () {
+            document.getElementById("mainContainer").innerHTML = ``;
+        };
+
+        let handleClickCreateRecord = function () {
+            startLoading();
+            //todo
+        };
+
+        let handleClickReadRecord = function () {
+            startLoading();
+            //todo
+        };
+
+        let handleClickUpdateRecord = function () {
+            startLoading();
+            //todo
+        };
+
+        let handleClickDeleteRecord = function () {
+            startLoading();
+            //todo
+        };
+
+        let handleClickLoginInfo = function () {
+            startLoading();
+            const url = `http://${location.host}/loginInfo`;
+            let request = new XMLHttpRequest();
+            request.open('GET', url, false);
+            request.send(null);
+            let response = JSON.parse(request.responseText);
+
+            let rows = '';
+            for (const parameter in response) {
+                rows += `<tr><td><u>${parameter}:</u></td><td>${response[parameter]}</td></tr>`
+            }
+
+            document.getElementById("mainContainer").innerHTML = `<table class="table cell-border row-hover"><tbody>${rows}</tbody></table>`;
+        };
+
+        let handleClickCompanyInfo = function () {
+            startLoading();
+            //todo
+        };
+
+        let handleClickLicenses = function () {
+            startLoading();
+            //todo
+        };
+
+        let handleClickLimits = function () {
+            startLoading();
+            //todo
+        };
+
+        let handleClickOrgTrustStatus = function () {
+            startLoading();
+            //todo
+        };
+
+        let handleClickLoginInfoTest = function () {
+            startLoading();
             let postObj = {
                 id: 1,
                 title: "What is AJAX",
                 body: "AJAX stands for Asynchronous JavaScript..."
             };
 
-            let post = JSON.stringify(postObj)
-            const url = `http://${location.host}/home`
-            let xhr = new XMLHttpRequest()
-            xhr.open('POST', url, true)
-            xhr.setRequestHeader('Content-type', 'application/json; charset=UTF-8')
+            let post = JSON.stringify(postObj);
+            const url = `http://${location.host}/home`;
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', url, true);
+            xhr.setRequestHeader('Content-type', 'application/json; charset=UTF-8');
             xhr.send(post);
             xhr.onload = function () {
                 if (xhr.status === 201) {
-                    console.log("Post successfully created!")
+                    console.log("Post successfully created!");
                 }
             }
         };

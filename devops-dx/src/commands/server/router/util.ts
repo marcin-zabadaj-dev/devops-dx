@@ -27,8 +27,22 @@ const getMainPage = (request, response, connection) => {
         });
 };
 
+const getLoginInfo = (request, response, connection) => {
+    response.setHeader("Content-Type", "application/json");
+
+    response.write(JSON.stringify({
+        username: connection.username,
+        instanceUrl: connection.instanceUrl,
+        orgId: connection.orgId,
+        version: connection.version,
+        accessToken: connection.accessToken,
+    }));
+    
+    response.end();
+};
+
 const getUrlConfig = (requestMethod, url) => {
     return requestMethod + '+' + url;
 }
 
-export default { handlePostRequest, getMainPage, getUrlConfig };
+export default { handlePostRequest, getMainPage, getUrlConfig, getLoginInfo };
