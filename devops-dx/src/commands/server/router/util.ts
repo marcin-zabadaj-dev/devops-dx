@@ -1,4 +1,6 @@
 import * as fs from 'fs';
+import * as https from 'https';
+import * as constants from './constants';
 
 const handlePostRequest = (request, response, connection) => {
     var jsonString = '';
@@ -13,9 +15,9 @@ const handlePostRequest = (request, response, connection) => {
 };
 
 const getMainPage = (request, response, connection) => {
-    fs.promises.readFile(__dirname + "/static/index.html")
+    fs.promises.readFile(__dirname + '/static/index.html')
         .then(contents => {
-            response.setHeader("Content-Type", "text/html");
+            response.setHeader('Content-Type', 'text/html');
             response.writeHead(200);
             response.end(contents);
         })
@@ -28,7 +30,7 @@ const getMainPage = (request, response, connection) => {
 };
 
 const getLoginInfo = (request, response, connection) => {
-    response.setHeader("Content-Type", "application/json");
+    response.setHeader('Content-Type', 'application/json');
 
     response.write(JSON.stringify({
         username: connection.username,
@@ -46,7 +48,7 @@ const getUrlConfig = (requestMethod, url) => {
 }
 
 const getCompanyInformation = async (request, response, connection) => {
-    response.setHeader("Content-Type", "application/json");
+    response.setHeader('Content-Type', 'application/json');
     let fields = await getAllFieldsForSObject(connection, 'Organization');
 
     let query = `SELECT ${Array.from(Object.keys(fields)).join(',')} FROM Organization`;
@@ -84,4 +86,40 @@ const getAllFieldsForSObject = async (connection, objectApiName) => {
     return fields;
 };
 
-export default { handlePostRequest, getMainPage, getUrlConfig, getLoginInfo, getCompanyInformation };
+const getLimits = (request, response, connection) => {
+    response.setHeader('Content-Type', 'application/json');
+
+    const options = {
+        host: connection.instanceUrl.substring('https://'.length, connection.instanceUrl.length),
+        path: constants.default.ENDPOINT_LIMITS,
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + connection.accessToken,
+        }
+    };
+
+    https.get(options, (resp) => {
+        let data = '';
+
+        resp.on('data', (chunk) => {
+            data += chunk;
+        });
+
+        resp.on('end', () => {
+            let limits = JSON.parse(data);
+
+            for (const limitName in limits) {
+                limits[limitName].Used = limits[limitName].Max === 0 ? 0 : (Math.round((limits[limitName].Max - limits[limitName].Remaining) / limits[limitName].Max * 1000.0) / 10.0);
+                limits[limitName].class = limits[limitName].Used > constants.default.LIMIT_MAX_THRESHOLD_ALERT ? 'alert' : (limits[limitName].Used > constants.default.LIMIT_MAX_THRESHOLD_WARNING ? 'warning' : '');
+            }
+            
+            response.write(JSON.stringify(limits));
+            response.end();
+        });
+    }).on('error', (error) => {
+        console.error(error.message);
+    });
+};
+
+export default { handlePostRequest, getMainPage, getUrlConfig, getLoginInfo, getCompanyInformation, getLimits };

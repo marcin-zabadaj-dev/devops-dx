@@ -7,6 +7,7 @@ const getRouterMap = () => {
     routerMap.set(util.default.getUrlConfig('GET', '/home'), util.default.getMainPage);
     routerMap.set(util.default.getUrlConfig('GET', '/loginInfo'), util.default.getLoginInfo);
     routerMap.set(util.default.getUrlConfig('GET', '/companyInfo'), util.default.getCompanyInformation);
+    routerMap.set(util.default.getUrlConfig('GET', '/limits'), util.default.getLimits);
 
     return routerMap;
 };
