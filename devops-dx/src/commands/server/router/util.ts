@@ -37,7 +37,7 @@ const getLoginInfo = (request, response, connection) => {
         version: connection.version,
         accessToken: connection.accessToken,
     }));
-    
+
     response.end();
 };
 
@@ -45,4 +45,43 @@ const getUrlConfig = (requestMethod, url) => {
     return requestMethod + '+' + url;
 }
 
-export default { handlePostRequest, getMainPage, getUrlConfig, getLoginInfo };
+const getCompanyInformation = async (request, response, connection) => {
+    response.setHeader("Content-Type", "application/json");
+    let fields = await getAllFieldsForSObject(connection, 'Organization');
+
+    let query = `SELECT ${Array.from(Object.keys(fields)).join(',')} FROM Organization`;
+    const companyInformation = await connection.query(query);
+
+    for (const fieldApiName in fields) {
+        if (companyInformation.records[0][fieldApiName] === null) {
+            delete fields[fieldApiName]
+            continue;
+        }
+        fields[fieldApiName].value = companyInformation.records[0][fieldApiName];
+    }
+
+    response.write(JSON.stringify(fields));
+    response.end();
+};
+
+const getAllFieldsForSObject = async (connection, objectApiName) => {
+    let fields = {};
+    let compoundFields = [];
+
+    let sobjectInformation = await connection.describe(objectApiName);
+    sobjectInformation.fields.forEach(field => {
+        fields[field.name] = {
+            label: field.label
+        };
+
+        if (field.compoundFieldName) {
+            compoundFields.push(field.compoundFieldName);
+        }
+    });
+
+    compoundFields.forEach(fieldApiName => delete fields[fieldApiName]);
+
+    return fields;
+};
+
+export default { handlePostRequest, getMainPage, getUrlConfig, getLoginInfo, getCompanyInformation };
